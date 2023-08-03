@@ -2,4 +2,4 @@ module github.com/chiyoi/apricot/kitsune
 
 go 1.20
 
-require github.com/chiyoi/apricot/logs v0.1.0
+require github.com/chiyoi/apricot/logs v0.1.1

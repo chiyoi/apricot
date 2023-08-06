@@ -2,6 +2,7 @@ package kitsune
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -18,16 +19,46 @@ func SetLogFile(w io.Writer) {
 	ls.SetOutput(w)
 }
 
-func ParseRequest(w http.ResponseWriter, r *http.Request, req any) (ok bool) {
-	if req == nil {
-		return true
+func ParseRequest(r *http.Request, a any) (err error) {
+	if a == nil {
+		return nil
 	}
 
-	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
-		message := "Parse request error."
-		ls.Warning(message, err)
-		BadRequest(w, message)
+	return json.NewDecoder(r.Body).Decode(a)
+}
+
+func ParseResponse(re *http.Response, a any) (err error) {
+	defer re.Body.Close()
+
+	if re.StatusCode/100 != 2 {
+		return newResponseError(re.StatusCode, re.Body)
+	}
+
+	if a == nil {
 		return
 	}
-	return true
+	return json.NewDecoder(re.Body).Decode(&a)
+}
+
+type ResponseError struct {
+	StatusCode int
+	Message    json.RawMessage
+}
+
+func newResponseError(code int, reader io.Reader) *ResponseError {
+	data, err := io.ReadAll(reader)
+	if err != nil {
+		return &ResponseError{
+			StatusCode: code,
+			Message:    []byte(fmt.Sprintf("\"read response failed: %s\"", err.Error())),
+		}
+	}
+	return &ResponseError{
+		StatusCode: code,
+		Message:    data,
+	}
+}
+
+func (re *ResponseError) Error() string {
+	return fmt.Sprintf("(status: %d, message: %s)", re.StatusCode, re.Message)
 }

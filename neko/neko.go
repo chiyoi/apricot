@@ -33,9 +33,9 @@ func TrimPattern(path string, pattern string) string {
 	return strings.TrimPrefix(path, pattern)
 }
 
-func PathResolver(pattern string) (resolve func(pattern string) string) {
+func PathResolver(pattern string) (resolve func(pattern string) string, err error) {
 	if !IsWildcard(pattern) {
-		ls.Panic(ErrWildcardPatternNeeded)
+		return nil, ErrWildcardPatternNeeded
 	}
 
 	return func(p string) string {
@@ -43,7 +43,7 @@ func PathResolver(pattern string) (resolve func(pattern string) string) {
 			return path.Join(pattern, p) + "/"
 		}
 		return path.Join(pattern, p)
-	}
+	}, nil
 }
 
 func AllowCrossOrigin(h http.Handler) http.Handler {

@@ -29,6 +29,10 @@ func InternalServerError(w http.ResponseWriter, message string) {
 	e(w, "500 internal server error", http.StatusInternalServerError, message)
 }
 
+func ServiceUnavailable(w http.ResponseWriter, message string) {
+	e(w, "503 service unavailable", http.StatusServiceUnavailable, message)
+}
+
 func TemporaryRedirect(w http.ResponseWriter, r *http.Request, u string) {
 	http.Redirect(w, r, u, http.StatusTemporaryRedirect)
 }

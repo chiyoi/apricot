@@ -1,8 +1,11 @@
 package neko
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"net/http"
+	"os"
 )
 
 func TeapotHandler(message string) http.Handler {
@@ -39,9 +42,16 @@ func RedirectToSlashHandler() http.Handler {
 	})
 }
 
-func WarmupHandler() http.Handler {
+func StatusHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ls.Info("Service warmup.")
-		fmt.Fprintln(w, "Nyan~")
+		ls.Info("Get status.")
+		var buf bytes.Buffer
+		fmt.Fprintln(&buf, "Nyan~")
+		if v := os.Getenv("VERSION"); v != "" {
+			fmt.Fprintf(&buf, "Version: %s\n", v)
+		}
+		if _, err := io.Copy(w, &buf); err != nil {
+			ls.Warning("Write response error.", err)
+		}
 	})
 }

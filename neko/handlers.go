@@ -55,3 +55,14 @@ func StatusHandler() http.Handler {
 		}
 	})
 }
+
+func AssertMethod(method string, h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != method {
+			ls.Warning("Method not allowed (got, expected).", r.Method, method)
+			MethodNotAllowed(w, "")
+			return
+		}
+		h.ServeHTTP(w, r)
+	})
+}

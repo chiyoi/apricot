@@ -20,7 +20,7 @@ var ShutdownTimeout = time.Second * 5
 var ls = logs.NewLoggers()
 
 func init() {
-	ls.PrependPrefix("[neko] ")
+	ls.Prefix("[neko] ")
 }
 
 var ErrWildcardPatternNeeded = errors.New("wildcard pattern needed")

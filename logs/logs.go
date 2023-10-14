@@ -14,7 +14,7 @@ func SetOutput(w io.Writer) {
 }
 
 func PrependPrefix(prefix string) {
-	std.PrependPrefix(prefix)
+	std.Prefix(prefix)
 }
 
 func Info(v ...any) {
@@ -65,7 +65,7 @@ func (ls *Loggers) SetOutput(output io.Writer) {
 	}
 }
 
-func (ls *Loggers) PrependPrefix(prefix string) {
+func (ls *Loggers) Prefix(prefix string) {
 	for _, l := range []*log.Logger{ls.i, ls.w, ls.e, ls.p, ls.f, ls.d} {
 		l.SetPrefix(prefix + l.Prefix())
 	}

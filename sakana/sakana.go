@@ -7,11 +7,13 @@ import (
 	"github.com/chiyoi/apricot/logs"
 )
 
-var ls = logs.NewLoggers()
-var output io.Writer = os.Stdout
+var (
+	ls               = logs.NewLoggers()
+	output io.Writer = os.Stdout
+)
 
 func init() {
-	ls.PrependPrefix("[sakana] ")
+	ls.Prefix("[sakana] ")
 }
 
 func SetLogFile(w io.Writer) { ls.SetOutput(w) }

@@ -12,7 +12,7 @@ import (
 var ls = logs.NewLoggers()
 
 func init() {
-	ls.PrependPrefix("[kitsune] ")
+	ls.Prefix("[kitsune] ")
 }
 
 func SetLogFile(w io.Writer) {

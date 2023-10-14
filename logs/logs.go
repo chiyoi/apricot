@@ -13,7 +13,7 @@ func SetOutput(w io.Writer) {
 	std.SetOutput(w)
 }
 
-func PrependPrefix(prefix string) {
+func Prefix(prefix string) {
 	std.Prefix(prefix)
 }
 

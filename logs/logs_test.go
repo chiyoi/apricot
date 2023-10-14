@@ -18,6 +18,6 @@ func TestSetOutput(t *testing.T) {
 
 func TestPrependPrefix(t *testing.T) {
 	Info("nyan")
-	PrependPrefix("[neko] ")
+	Prefix("[neko] ")
 	Info("nyan")
 }

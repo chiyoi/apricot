@@ -10,11 +10,7 @@ func InternalError(w io.Writer) {
 }
 
 func UsageError(w io.Writer, message string, usage string) {
-	if message != "" {
-		fmt.Fprintln(w, "Usage error:", message)
-	} else {
-		fmt.Fprintln(w, "Usage error.")
-	}
+	fmt.Fprintln(w, "Usage error.", message)
 	if usage != "" {
 		fmt.Fprintln(w, usage)
 	}

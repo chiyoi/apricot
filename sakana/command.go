@@ -8,6 +8,10 @@ import (
 	"sync"
 )
 
+const (
+	Continue = -1
+)
+
 // Command routes handler by command (`FlagSet.Args()[0]`)
 type Command struct {
 	FlagSet *flag.FlagSet
@@ -18,7 +22,7 @@ type Command struct {
 	options  []option
 	examples []example
 
-	work []work
+	work []Handler
 	subs map[string]command
 }
 
@@ -38,11 +42,6 @@ type option struct {
 	names       []string
 	required    bool
 	description string
-}
-
-type work struct {
-	h    Handler
-	stop bool
 }
 
 func NewCommand(name string) *Command {
@@ -78,10 +77,10 @@ func (c *Command) Example(usage string, description string) {
 	c.examples = append(c.examples, example{usage, description})
 }
 
-func (c *Command) Work(h Handler, stop bool) {
+func (c *Command) Work(h Handler) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	c.work = append(c.work, work{h, stop})
+	c.work = append(c.work, h)
 }
 
 // Command registers or updates a subcommand
@@ -115,9 +114,9 @@ func (c *Command) ServeArgs(w ResponseWriter, args []string) int {
 	}
 	args = c.FlagSet.Args()
 
-	for _, wo := range c.work {
-		ret := wo.h.ServeArgs(w, args)
-		if wo.stop {
+	for _, h := range c.work {
+		ret := h.ServeArgs(w, args)
+		if ret != Continue {
 			return ret
 		}
 	}

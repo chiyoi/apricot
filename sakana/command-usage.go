@@ -19,13 +19,13 @@ func (c *Command) Usage() string {
 	}
 
 	if !reflect.ValueOf(c.summary).IsZero() {
-		fmt.Fprintf(&buf, "usage: %s\n", c.summary.usage)
+		fmt.Fprintf(&buf, "Usage: %s\n", c.summary.usage)
 		fmt.Fprintf(&buf, "    %s\n", c.summary.description)
 		fmt.Fprintln(&buf)
 	}
 
 	if len(c.options) != 0 {
-		fmt.Fprintln(&buf, "options:")
+		fmt.Fprintln(&buf, "Options:")
 		var maxWidth int
 		var existRequired bool
 		for _, option := range c.options {
@@ -66,7 +66,7 @@ func (c *Command) Usage() string {
 	}
 
 	if len(c.subs) != 0 {
-		fmt.Fprintln(&buf, "commands:")
+		fmt.Fprintln(&buf, "Commands:")
 		var maxWidth int
 		for name := range c.subs {
 			if len(name) > maxWidth {
@@ -80,7 +80,7 @@ func (c *Command) Usage() string {
 	}
 
 	if len(c.examples) != 0 {
-		fmt.Fprintln(&buf, "examples:")
+		fmt.Fprintln(&buf, "Examples:")
 		for _, example := range c.examples {
 			fmt.Fprintf(&buf, "    %s\n", example.usage)
 			fmt.Fprintf(&buf, "        %s\n", example.description)
@@ -89,7 +89,7 @@ func (c *Command) Usage() string {
 	}
 
 	if buf.Len() == 0 {
-		return "(no help message)"
+		return "(No help message.)"
 	}
 	return buf.String()[:buf.Len()-1]
 }

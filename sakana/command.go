@@ -4,7 +4,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"io"
+	"os"
 	"sync"
 )
 
@@ -18,9 +18,11 @@ type Command struct {
 	options  []option
 	examples []example
 
-	work Handler
+	work []work
 	subs map[string]command
 }
+
+var _ Handler = (*Command)(nil)
 
 type command struct {
 	h    Handler
@@ -36,6 +38,11 @@ type option struct {
 	names       []string
 	required    bool
 	description string
+}
+
+type work struct {
+	h    Handler
+	stop bool
 }
 
 func NewCommand(name string) *Command {
@@ -71,10 +78,10 @@ func (c *Command) Example(usage string, description string) {
 	c.examples = append(c.examples, example{usage, description})
 }
 
-func (c *Command) Work(work Handler) {
+func (c *Command) Work(h Handler, stop bool) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	c.work = work
+	c.work = append(c.work, work{h, stop})
 }
 
 // Command registers or updates a subcommand
@@ -89,34 +96,41 @@ func (c *Command) Command(name string, description string, h Handler) {
 	c.subs[name] = command{h, description}
 }
 
-func (c *Command) ServeArgs(w io.Writer, args []string) {
+func (c *Command) ServeArgs(w ResponseWriter, args []string) int {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 
 	if w == nil {
-		w = output
+		w = NewResponseWriter(os.Stdout, os.Stderr)
 	}
 
 	if err := c.FlagSet.Parse(args); err != nil {
 		if errors.Is(err, flag.ErrHelp) {
-			fmt.Fprint(w, c.Usage())
-			return
+			fmt.Fprint(w.Err(), c.Usage())
+			return 0
 		}
 		UsageError(w, "Failed to parse arguments: "+err.Error())
+		fmt.Fprintln(w.Err(), c.Usage())
+		return 1
 	}
 	args = c.FlagSet.Args()
 
-	if c.work != nil {
-		c.work.ServeArgs(w, args)
+	for _, wo := range c.work {
+		ret := wo.h.ServeArgs(w, args)
+		if wo.stop {
+			return ret
+		}
 	}
 
-	c.FlagSet.Args()
 	if len(args) > 0 {
 		sub, ok := c.subs[args[0]]
 		if !ok {
 			UsageError(w, fmt.Sprintf("Undefined subcommand (%s).", args[0]))
+			fmt.Fprintln(w.Err(), c.Usage())
+			return 1
 		}
 
-		sub.h.ServeArgs(w, args[1:])
+		return sub.h.ServeArgs(w, args[1:])
 	}
+	return 0
 }

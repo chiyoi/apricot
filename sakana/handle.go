@@ -2,19 +2,28 @@ package sakana
 
 import (
 	"fmt"
-	"io"
 )
 
-func InternalError(w io.Writer) {
-	if _, err := fmt.Fprintln(w, "Internal error."); err != nil {
+func InternalError(w ResponseWriter, message string) {
+	var msg string
+	if message != "" {
+		msg = "Internal error: " + message
+	} else {
+		msg = "Internal error."
+	}
+	if _, err := fmt.Fprintln(w.Err(), msg); err != nil {
 		ls.Error("Write output error.", err)
 	}
-	ls.Panic("internal error")
 }
 
-func UsageError(w io.Writer, message string) {
-	if _, err := fmt.Fprintln(w, "Usage error:", message); err != nil {
+func UsageError(w ResponseWriter, message string) {
+	var msg string
+	if message != "" {
+		msg = "Usage error: " + message
+	} else {
+		msg = "Usage error."
+	}
+	if _, err := fmt.Fprintln(w.Err(), msg); err != nil {
 		ls.Error("Write output error.", err)
 	}
-	ls.Panic("usage error")
 }

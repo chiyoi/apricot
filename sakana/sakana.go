@@ -17,13 +17,13 @@ func SetLogFile(w io.Writer) {
 }
 
 type Handler interface {
-	ServeArgs(w ResponseWriter, args []string) int
+	ServeArgs(out [2]io.Writer, in io.Reader, args ...string) int
 }
 
-type HandlerFunc func(w ResponseWriter, args []string) int
+type HandlerFunc func(out [2]io.Writer, in io.Reader, args ...string) int
 
 var _ Handler = (HandlerFunc)(nil)
 
-func (h HandlerFunc) ServeArgs(w ResponseWriter, args []string) int {
-	return h(w, args)
+func (h HandlerFunc) ServeArgs(out [2]io.Writer, in io.Reader, args ...string) int {
+	return h(out, in, args...)
 }

@@ -2,27 +2,23 @@ package sakana
 
 import (
 	"fmt"
-	"reflect"
 	"strings"
 )
 
-// Usage generates the usage string
-func (c *Command) Usage() string {
+// String generates the usage string
+func (c *Command) String() string {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 
 	var buf strings.Builder
-
 	if len(c.welcome) != 0 {
 		fmt.Fprintln(&buf, c.welcome)
 		fmt.Fprintln(&buf)
 	}
 
-	if !reflect.ValueOf(c.summary).IsZero() {
-		fmt.Fprintf(&buf, "Usage: %s\n", c.summary.usage)
-		fmt.Fprintf(&buf, "    %s\n", c.summary.description)
-		fmt.Fprintln(&buf)
-	}
+	fmt.Fprintf(&buf, "Usage: %s\n", c.summary.usage)
+	fmt.Fprintf(&buf, "    %s\n", c.summary.description)
+	fmt.Fprintln(&buf)
 
 	if len(c.options) != 0 {
 		fmt.Fprintln(&buf, "Options:")
@@ -46,9 +42,9 @@ func (c *Command) Usage() string {
 			for i, name := range option.names {
 				width += len(name)
 				if i != 0 {
+					width += 2
 					fmt.Fprintf(&buf, ", %s", name)
 				} else {
-					width += 2
 					fmt.Fprintf(&buf, "    %s", name)
 				}
 			}
@@ -73,8 +69,8 @@ func (c *Command) Usage() string {
 				maxWidth = len(name)
 			}
 		}
-		for name, command := range c.subs {
-			fmt.Fprintf(&buf, "    %s%s - %s\n", strings.Repeat(" ", maxWidth-len(name)), name, command.desc)
+		for name, cmd := range c.subs {
+			fmt.Fprintf(&buf, "    %s%s - %s\n", strings.Repeat(" ", maxWidth-len(name)), name, cmd.summary.description)
 		}
 		fmt.Fprintln(&buf)
 	}

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"io"
+	"os"
 	"sync"
 )
 
@@ -89,22 +89,31 @@ func (c *Command) Command(cmd *Command) {
 	c.subs[cmd.FlagSet.Name()] = cmd
 }
 
-func (c *Command) ServeArgs(out [2]io.Writer, in io.Reader, args ...string) int {
+func (c *Command) ServeArgs(f Files, args []string) int {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
+	if f.In == nil {
+		f.In = os.Stdin
+	}
+	if f.Out == nil {
+		f.Out = os.Stdout
+	}
+	if f.Err == nil {
+		f.Err = os.Stderr
+	}
+
 	if err := c.FlagSet.Parse(args); err != nil {
 		if errors.Is(err, flag.ErrHelp) {
-			fmt.Fprint(out[1], c.String())
+			fmt.Fprint(f.Err, c.UsageString())
 			return 0
 		}
-		UsageError(out[1], "Failed to parse arguments: "+err.Error())
-		fmt.Fprintln(out[1], c.String())
+		UsageError(f.Err, "Failed to parse arguments: "+err.Error(), c.UsageString())
 		return 1
 	}
 	args = c.FlagSet.Args()
 
 	for _, h := range c.work {
-		ret := h.ServeArgs(out, in, args...)
+		ret := h.ServeArgs(f, args)
 		if ret != Continue {
 			return ret
 		}
@@ -113,11 +122,10 @@ func (c *Command) ServeArgs(out [2]io.Writer, in io.Reader, args ...string) int 
 	if len(args) > 0 {
 		sub, ok := c.subs[args[0]]
 		if !ok {
-			UsageError(out[1], fmt.Sprintf("Undefined subcommand (%s).", args[0]))
-			fmt.Fprintln(out[1], c.String())
+			UsageError(f.Err, fmt.Sprintf("Undefined subcommand (%s).", args[0]), c.UsageString())
 			return 1
 		}
-		return sub.ServeArgs(out, in, args[1:]...)
+		return sub.ServeArgs(f, args[1:])
 	}
 	return 0
 }

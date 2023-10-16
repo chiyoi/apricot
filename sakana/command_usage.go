@@ -5,8 +5,12 @@ import (
 	"strings"
 )
 
-// String generates the usage string
 func (c *Command) String() string {
+	return fmt.Sprintf("(%s: %s)", c.name, c.summary.description)
+}
+
+// UsageString generates the usage string
+func (c *Command) UsageString() string {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 
@@ -48,15 +52,15 @@ func (c *Command) String() string {
 					fmt.Fprintf(&buf, "    %s", name)
 				}
 			}
-			fmt.Fprint(&buf, strings.Repeat(" ", maxWidth-width+1))
+			fmt.Fprint(&buf, strings.Repeat(" ", maxWidth-width))
 			if requiredExists {
 				if option.required {
-					fmt.Fprint(&buf, "(required) ")
+					fmt.Fprint(&buf, " (required)")
 				} else {
 					fmt.Fprint(&buf, "           ")
 				}
 			}
-			fmt.Fprintf(&buf, "- %s\n", option.description)
+			fmt.Fprintf(&buf, " - %s\n", option.description)
 		}
 		fmt.Fprintln(&buf)
 	}

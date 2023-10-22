@@ -39,7 +39,7 @@ func RedirectToSlashHandler() http.Handler {
 	})
 }
 
-func Ping() http.Handler {
+func PingHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ls.Info("Pong!")
 		if _, err := fmt.Fprintln(w, "Pong!"); err != nil {

@@ -26,40 +26,16 @@ func InternalServerError(w http.ResponseWriter, rej any) {
 }
 
 func Respond(w http.ResponseWriter, resp any) {
-	if resp == nil {
-		ls.Warning("Empty response.")
-		return
-	}
-
-	data, err := json.Marshal(resp)
-	if err != nil {
-		ls.Error("Marshal response error.", err)
-		http.Error(w, "", http.StatusInternalServerError)
-		return
-	}
-
 	w.Header().Set("Content-Type", "application/json")
-	if _, err := w.Write(data); err != nil {
-		ls.Warning("Write output error.", err)
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
+		ls.Warning(err)
 	}
 }
 
 func Reject(w http.ResponseWriter, rej any, code int) {
-	if rej == nil {
-		http.Error(w, "", code)
-		return
-	}
-
-	data, err := json.Marshal(rej)
-	if err != nil {
-		ls.Error("Marshal rejection error.", err)
-		http.Error(w, "", http.StatusInternalServerError)
-		return
-	}
-
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
-	if _, err := w.Write(data); err != nil {
-		ls.Warning("Write output error.", err)
+	if err := json.NewEncoder(w).Encode(rej); err != nil {
+		ls.Warning(err)
 	}
 }

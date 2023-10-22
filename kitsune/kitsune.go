@@ -9,11 +9,11 @@ import (
 	"github.com/chiyoi/apricot/logs"
 )
 
-var ls = logs.NewLoggers()
-
-func init() {
+var ls = func() *logs.Loggers {
+	ls := logs.NewLoggers()
 	ls.Prefix("[kitsune] ")
-}
+	return ls
+}()
 
 func SetLogFile(w io.Writer) {
 	ls.SetOutput(w)
@@ -23,7 +23,6 @@ func ParseRequest(r *http.Request, a any) (err error) {
 	if a == nil {
 		return nil
 	}
-
 	return json.NewDecoder(r.Body).Decode(a)
 }
 
@@ -42,20 +41,19 @@ func ParseResponse(re *http.Response, a any) (err error) {
 
 type ResponseError struct {
 	StatusCode int
-	Message    json.RawMessage
+	Message    string
 }
 
-func newResponseError(code int, reader io.Reader) *ResponseError {
-	data, err := io.ReadAll(reader)
+func newResponseError(code int, body io.Reader) *ResponseError {
+	data, err := io.ReadAll(body)
 	if err != nil {
 		return &ResponseError{
 			StatusCode: code,
-			Message:    []byte(fmt.Sprintf("\"read response failed: %s\"", err.Error())),
 		}
 	}
 	return &ResponseError{
 		StatusCode: code,
-		Message:    data,
+		Message:    string(data),
 	}
 }
 

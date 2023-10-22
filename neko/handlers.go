@@ -1,24 +1,21 @@
 package neko
 
 import (
-	"bytes"
 	"fmt"
-	"io"
 	"net/http"
-	"os"
 )
 
-func TeapotHandler(message string) http.Handler {
+func TeapotHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ls.Warning("I'm a teapot~", message)
-		Teapot(w, message)
+		ls.Warning("I'm a teapot~")
+		Teapot(w)
 	})
 }
 
-func InternalServerErrorHandler(message string) http.Handler {
+func InternalServerErrorHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ls.Error("Internal server error.", message)
-		InternalServerError(w, message)
+		ls.Error("Internal server error.")
+		InternalServerError(w)
 	})
 }
 
@@ -42,16 +39,11 @@ func RedirectToSlashHandler() http.Handler {
 	})
 }
 
-func StatusHandler() http.Handler {
+func Ping() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ls.Info("Get status.")
-		var buf bytes.Buffer
-		fmt.Fprintln(&buf, "Nyan~")
-		if v := os.Getenv("VERSION"); v != "" {
-			fmt.Fprintf(&buf, "Version: %s\n", v)
-		}
-		if _, err := io.Copy(w, &buf); err != nil {
-			ls.Warning("Write response error.", err)
+		ls.Info("Pong!")
+		if _, err := fmt.Fprintln(w, "Pong!"); err != nil {
+			ls.Warning(err)
 		}
 	})
 }
@@ -59,8 +51,8 @@ func StatusHandler() http.Handler {
 func AssertMethod(method string, h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != method {
-			ls.Warning("Method not allowed (got, expected).", r.Method, method)
-			MethodNotAllowed(w, "")
+			ls.Warning("Method not allowed.", r.Method, method)
+			MethodNotAllowed(w)
 			return
 		}
 		h.ServeHTTP(w, r)

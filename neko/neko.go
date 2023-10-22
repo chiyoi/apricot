@@ -16,14 +16,12 @@ import (
 )
 
 var ShutdownTimeout = time.Second * 5
-
-var ls = logs.NewLoggers()
-
-func init() {
-	ls.Prefix("[neko] ")
-}
-
 var ErrWildcardPatternNeeded = errors.New("wildcard pattern needed")
+var ls = func() *logs.Loggers {
+	ls := logs.NewLoggers()
+	ls.Prefix("[neko] ")
+	return ls
+}()
 
 func IsWildcard(pattern string) bool {
 	return strings.HasSuffix(pattern, "/")
@@ -60,7 +58,6 @@ func AllowCrossOrigin(h http.Handler) http.Handler {
 
 func StartServer(srv *http.Server, tls bool) {
 	ls.Info(fmt.Sprintf("Start server (%s).", srv.Addr))
-
 	switch err := func() error {
 		if tls {
 			return srv.ListenAndServeTLS("", "")

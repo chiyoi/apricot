@@ -15,13 +15,17 @@ import (
 	"github.com/chiyoi/apricot/logs"
 )
 
-var ShutdownTimeout = time.Second * 5
-var ErrWildcardPatternNeeded = errors.New("wildcard pattern needed")
-var ls = func() *logs.Loggers {
-	ls := logs.NewLoggers()
-	ls.Prefix("[neko] ")
-	return ls
-}()
+var (
+	ShutdownTimeout = time.Second * 5
+
+	ErrWildcardPatternNeeded = errors.New("wildcard pattern needed")
+
+	ls = func() *logs.Loggers {
+		ls := logs.NewLoggers()
+		ls.Prefix("[neko]")
+		return ls
+	}()
+)
 
 func IsWildcard(pattern string) bool {
 	return strings.HasSuffix(pattern, "/")

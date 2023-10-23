@@ -48,11 +48,9 @@ func PingHandler() http.Handler {
 	})
 }
 
-func AssertMethod(method string, h http.Handler) http.Handler {
+func MethodAsserted(h http.Handler, method string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != method {
-			ls.Warning("Method not allowed.", r.Method, method)
-			MethodNotAllowed(w)
+		if !GuardMethod(w, r, method) {
 			return
 		}
 		h.ServeHTTP(w, r)

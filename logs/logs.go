@@ -33,15 +33,9 @@ func Debug(v ...any) {
 	std.d.Output(2, fmt.Sprintln(v...))
 }
 
-func Panic(v ...any) {
-	s := fmt.Sprintln(v...)
-	std.p.Output(2, s)
-	panic(s)
-}
-
-func Fatal(v ...any) {
-	std.f.Output(2, fmt.Sprintln(v...))
-	os.Exit(1)
+func Panic(v any) {
+	std.p.Output(2, fmt.Sprintln(v))
+	panic(v)
 }
 
 type Loggers struct {
@@ -87,7 +81,7 @@ func (ls *Loggers) Debug(v ...any) {
 	ls.d.Output(2, fmt.Sprintln(v...))
 }
 
-func (ls *Loggers) Panic(a any) {
-	ls.p.Output(2, fmt.Sprintln(a))
-	panic(a)
+func (ls *Loggers) Panic(v any) {
+	ls.p.Output(2, fmt.Sprintln(v))
+	panic(v)
 }

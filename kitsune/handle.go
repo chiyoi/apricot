@@ -9,6 +9,10 @@ func BadRequest(w http.ResponseWriter, rej any) {
 	Reject(w, rej, http.StatusBadRequest)
 }
 
+func MethodNotAllowed(w http.ResponseWriter, rej any) {
+	Reject(w, rej, http.StatusMethodNotAllowed)
+}
+
 func Unauthorized(w http.ResponseWriter, rej any) {
 	Reject(w, rej, http.StatusUnauthorized)
 }

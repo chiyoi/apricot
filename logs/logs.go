@@ -67,7 +67,7 @@ func (ls *Loggers) SetOutput(output io.Writer) {
 
 func (ls *Loggers) Prefix(prefix string) {
 	for _, l := range []*log.Logger{ls.i, ls.w, ls.e, ls.p, ls.f, ls.d} {
-		l.SetPrefix(prefix + l.Prefix())
+		l.SetPrefix(prefix + " " + l.Prefix())
 	}
 }
 
@@ -87,13 +87,7 @@ func (ls *Loggers) Debug(v ...any) {
 	ls.d.Output(2, fmt.Sprintln(v...))
 }
 
-func (ls *Loggers) Panic(v ...any) {
-	s := fmt.Sprintln(v...)
-	ls.p.Output(2, s)
-	panic(s)
-}
-
-func (ls *Loggers) Fatal(v ...any) {
-	ls.f.Output(2, fmt.Sprintln(v...))
-	os.Exit(1)
+func (ls *Loggers) Panic(a any) {
+	ls.p.Output(2, fmt.Sprintln(a))
+	panic(a)
 }

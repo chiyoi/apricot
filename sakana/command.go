@@ -119,13 +119,15 @@ func (c *Command) ServeArgs(f Files, args []string) int {
 		}
 	}
 
-	if len(args) > 0 {
-		sub, ok := c.subs[args[0]]
-		if !ok {
-			UsageError(f.Err, fmt.Sprintf("Undefined subcommand (%s).", args[0]), c.UsageString())
-			return 1
-		}
-		return sub.ServeArgs(f, args[1:])
+	if len(args) == 0 {
+		UsageError(f.Err, "Subcommand is needed.", c.UsageString())
+		return 1
 	}
-	return 0
+
+	sub, ok := c.subs[args[0]]
+	if !ok {
+		UsageError(f.Err, fmt.Sprint("Undefined subcommand. ", "args[0]: ", args[0]), c.UsageString())
+		return 1
+	}
+	return sub.ServeArgs(f, args[1:])
 }

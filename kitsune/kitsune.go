@@ -15,7 +15,7 @@ var ls = func() *logs.Loggers {
 	return ls
 }()
 
-func SetLogFile(w io.Writer) {
+func SetLogOutput(w io.Writer) {
 	ls.SetOutput(w)
 }
 

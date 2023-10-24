@@ -12,7 +12,7 @@ func init() {
 	ls.Prefix("[sakana] ")
 }
 
-func SetLogFile(w io.Writer) {
+func SetLogOutput(w io.Writer) {
 	ls.SetOutput(w)
 }
 

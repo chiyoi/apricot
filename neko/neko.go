@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"os/signal"
@@ -26,6 +27,10 @@ var (
 		return ls
 	}()
 )
+
+func SetLogOutput(w io.Writer) {
+	ls.SetOutput(w)
+}
 
 func IsWildcard(pattern string) bool {
 	return strings.HasSuffix(pattern, "/")

@@ -35,17 +35,13 @@ func TrimPattern(path string, pattern string) string {
 	return strings.TrimPrefix(path, pattern)
 }
 
-func PathResolver(pattern string) (resolve func(pattern string) string, err error) {
-	if !IsWildcard(pattern) {
-		return nil, ErrWildcardPatternNeeded
-	}
-
+func PathResolver(pattern string) (resolve func(pattern string) string) {
 	return func(p string) string {
 		if IsWildcard(p) && !(pattern == "/" && p == "/") {
 			return path.Join(pattern, p) + "/"
 		}
 		return path.Join(pattern, p)
-	}, nil
+	}
 }
 
 func AllowCrossOrigin(h http.Handler) http.Handler {
@@ -61,7 +57,7 @@ func AllowCrossOrigin(h http.Handler) http.Handler {
 }
 
 func StartServer(srv *http.Server, tls bool) {
-	ls.Info(fmt.Sprintf("Start server (%s).", srv.Addr))
+	ls.Info(fmt.Sprintln("Start server.", "srv.Addr:", srv.Addr))
 	switch err := func() error {
 		if tls {
 			return srv.ListenAndServeTLS("", "")
@@ -69,7 +65,7 @@ func StartServer(srv *http.Server, tls bool) {
 		return srv.ListenAndServe()
 	}(); err {
 	case http.ErrServerClosed:
-		ls.Info(fmt.Sprintf("Stop server (%s).", srv.Addr))
+		ls.Info(fmt.Sprintln("Stop server.", "srv.Addr:", srv.Addr))
 	default:
 		ls.Panic(err)
 	}

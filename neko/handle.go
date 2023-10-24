@@ -48,3 +48,9 @@ func AssertMethod(w http.ResponseWriter, r *http.Request, method string) (ok boo
 	}
 	return true
 }
+
+func AssertWildcard(pattern string) {
+	if !IsWildcard(pattern) {
+		ls.Panic(ErrWildcardPatternNeeded)
+	}
+}

@@ -3,6 +3,7 @@ package neko
 import (
 	"fmt"
 	"net/http"
+	"os"
 )
 
 func TeapotHandler() http.Handler {
@@ -48,9 +49,40 @@ func PingHandler() http.Handler {
 	})
 }
 
+func VersionHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ls.Info("Get version.")
+		v := os.Getenv("VERSION")
+		if v != "" {
+			if _, err := fmt.Fprintf(w, "Version: %s\n", v); err != nil {
+				ls.Warning(err)
+			}
+		} else {
+			if _, err := fmt.Fprintln(w, "Unknown version."); err != nil {
+				ls.Warning(err)
+			}
+		}
+	})
+}
+
+func ReadinessHandler(check func() bool) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ls.Info("Readiness probe.")
+		if !check() {
+			ls.Warning("Service unavailable.")
+			ServiceUnavailable(w)
+			return
+		}
+		ls.Info("Service OK.")
+		if _, err := fmt.Fprintln(w, "Service OK."); err != nil {
+			ls.Warning(err)
+		}
+	})
+}
+
 func MethodAsserted(h http.Handler, method string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if !GuardMethod(w, r, method) {
+		if !AssertMethod(w, r, method) {
 			return
 		}
 		h.ServeHTTP(w, r)

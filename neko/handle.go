@@ -40,7 +40,7 @@ func PermanentRedirect(w http.ResponseWriter, r *http.Request, u string) {
 	http.Redirect(w, r, u, http.StatusPermanentRedirect)
 }
 
-func GuardMethod(w http.ResponseWriter, r *http.Request, method string) (ok bool) {
+func AssertMethod(w http.ResponseWriter, r *http.Request, method string) (ok bool) {
 	if r.Method != method {
 		ls.Warning("Method not allowed.", "r.Method:", r.Method, "method:", method)
 		MethodNotAllowed(w)

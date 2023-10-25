@@ -3,7 +3,6 @@ package neko
 import (
 	"context"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -62,7 +61,7 @@ func AllowCrossOrigin(h http.Handler) http.Handler {
 }
 
 func StartServer(srv *http.Server, tls bool) {
-	ls.Info(fmt.Sprintln("Start server.", "srv.Addr:", srv.Addr))
+	ls.Info("Start server.", "srv.Addr:", srv.Addr)
 	switch err := func() error {
 		if tls {
 			return srv.ListenAndServeTLS("", "")
@@ -70,7 +69,7 @@ func StartServer(srv *http.Server, tls bool) {
 		return srv.ListenAndServe()
 	}(); err {
 	case http.ErrServerClosed:
-		ls.Info(fmt.Sprintln("Stop server.", "srv.Addr:", srv.Addr))
+		ls.Info("Stop server.", "srv.Addr:", srv.Addr)
 	default:
 		ls.Panic(err)
 	}

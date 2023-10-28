@@ -1,2 +1,2 @@
 # neko
-Basic server framework.
+Web server utilities.

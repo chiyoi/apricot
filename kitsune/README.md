@@ -1,2 +1,2 @@
 # kitsune
-REST server and client framework.
+REST server and client utilities.

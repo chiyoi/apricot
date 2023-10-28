@@ -1,2 +1,2 @@
 # apricot
-Service and application frameworks.
+Service and application utilities.

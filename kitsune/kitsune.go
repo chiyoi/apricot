@@ -27,8 +27,6 @@ func ParseRequest(r *http.Request, a any) (err error) {
 }
 
 func ParseResponse(re *http.Response, a any) (err error) {
-	defer re.Body.Close()
-
 	if re.StatusCode/100 != 2 {
 		return newResponseError(re.StatusCode, re.Body)
 	}
@@ -36,6 +34,7 @@ func ParseResponse(re *http.Response, a any) (err error) {
 	if a == nil {
 		return
 	}
+	defer re.Body.Close()
 	return json.NewDecoder(re.Body).Decode(&a)
 }
 

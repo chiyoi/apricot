@@ -12,6 +12,10 @@ const (
 	Continue = -1
 )
 
+var (
+	_ Handler = (*Command)(nil)
+)
+
 // Command routes handler by command (`FlagSet.Args()[0]`)
 type Command struct {
 	name    string
@@ -24,10 +28,8 @@ type Command struct {
 	examples []example
 
 	work []Handler
-	subs map[string]*Command
+	subs map[string]Handler
 }
-
-var _ Handler = (*Command)(nil)
 
 type example struct {
 	usage       string
@@ -78,15 +80,15 @@ func (c *Command) Work(h Handler) {
 }
 
 // Command registers or updates a subcommand
-func (c *Command) Command(cmd *Command) {
+func (c *Command) Command(name string, h Handler) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
 	if c.subs == nil {
-		c.subs = map[string]*Command{}
+		c.subs = map[string]Handler{}
 	}
 
-	c.subs[cmd.FlagSet.Name()] = cmd
+	c.subs[name] = h
 }
 
 func (c *Command) ServeArgs(f Files, args []string) int {
@@ -107,7 +109,7 @@ func (c *Command) ServeArgs(f Files, args []string) int {
 			fmt.Fprint(f.Err, c.UsageString())
 			return 0
 		}
-		UsageError(f.Err, "Failed to parse arguments: "+err.Error(), c.UsageString())
+		UsageError(f.Err, err.Error(), c.UsageString())
 		return 1
 	}
 	args = c.FlagSet.Args()

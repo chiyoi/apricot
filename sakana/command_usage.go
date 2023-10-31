@@ -73,8 +73,13 @@ func (c *Command) UsageString() string {
 				maxWidth = len(name)
 			}
 		}
-		for name, cmd := range c.subs {
-			fmt.Fprintf(&buf, "    %s%s - %s\n", strings.Repeat(" ", maxWidth-len(name)), name, cmd.summary.description)
+		for name, h := range c.subs {
+			padding := strings.Repeat(" ", maxWidth-len(name))
+			if cmd, ok := h.(*Command); ok {
+				fmt.Fprintf(&buf, "    %s%s - %s\n", padding, name, cmd.summary.description)
+			} else {
+				fmt.Fprintf(&buf, "    %s%s\n", padding, name)
+			}
 		}
 		fmt.Fprintln(&buf)
 	}

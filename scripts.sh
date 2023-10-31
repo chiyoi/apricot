@@ -3,12 +3,12 @@ cd $(dirname $(realpath $0)) || return
 usage() {
     pwd
     echo "Scripts:"
-    echo "./scripts.sh tidy_all"
-    echo "    Go mod tidy for all modules."
+    echo "./scripts.sh tidy"
+    echo "    Tidy go modules."
 }
 
 tidy_all() {
-    for m in kitsune logs neko sakana test; do
+    for m in kitsune logs neko sakana; do
     cd $m
     go mod tidy
     cd ..

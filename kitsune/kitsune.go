@@ -19,6 +19,10 @@ func SetLogOutput(w io.Writer) {
 	ls.SetOutput(w)
 }
 
+func SetLogLevel(l logs.Level) {
+	ls.SetLevel(l)
+}
+
 func ParseRequest(r *http.Request, a any) (err error) {
 	if a == nil {
 		return nil

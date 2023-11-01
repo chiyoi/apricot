@@ -16,6 +16,10 @@ func SetLogOutput(w io.Writer) {
 	ls.SetOutput(w)
 }
 
+func SetLogLevel(l logs.Level) {
+	ls.SetLevel(l)
+}
+
 type Handler interface {
 	ServeArgs(f Files, args []string) int
 }

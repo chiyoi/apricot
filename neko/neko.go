@@ -31,6 +31,10 @@ func SetLogOutput(w io.Writer) {
 	ls.SetOutput(w)
 }
 
+func SetLogLevel(l logs.Level) {
+	ls.SetLevel(l)
+}
+
 func IsWildcard(pattern string) bool {
 	return strings.HasSuffix(pattern, "/")
 }

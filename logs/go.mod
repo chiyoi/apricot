@@ -1,3 +1,3 @@
 module github.com/chiyoi/apricot/logs
 
-go 1.20
+go 1.21.3

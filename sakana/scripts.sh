@@ -1,14 +1,14 @@
 #!/bin/sh
 scripts=$0
 cd $(dirname $(realpath $0)) || return
-usage() {
+usage () {
     pwd
     echo "Scripts:"
     echo "$scripts tidy"
     echo "    Go mod tidy."
 }
 
-tidy() {
+tidy () {
     go mod tidy
 }
 

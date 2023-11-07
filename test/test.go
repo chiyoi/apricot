@@ -30,6 +30,7 @@ func AddAttachment(t *testing.T, filename string, a any) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	switch v := a.(type) {
 	case io.Reader:
 		io.Copy(f, v)

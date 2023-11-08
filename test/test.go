@@ -13,13 +13,6 @@ var (
 	AttachmentsRoot = "test_attachments"
 )
 
-func Must[T any](t *testing.T, v T, err error) T {
-	if err != nil {
-		t.Fatal(err)
-	}
-	return v
-}
-
 func AddAttachment(t *testing.T, filename string, a any) {
 	err := os.MkdirAll(AttachmentsRoot, 0700)
 	if err != nil {

@@ -27,19 +27,21 @@ func AddAttachment(t *testing.T, filename string, a any) {
 	switch v := a.(type) {
 	case io.Reader:
 		io.Copy(f, v)
+	case []byte:
+		f.Write(v)
 	default:
 		fmt.Fprint(f, v)
 	}
 }
 
-func CheckEqual[T comparable](t *testing.T, testcase int, out, expect T) {
+func CheckEqual[T comparable](t *testing.T, testcase int, name string, out, expect T) {
 	if out != expect {
-		t.Errorf("Testcase %d: out %v, expect %v.", testcase, out, expect)
+		t.Errorf("Testcase %d, %s: out %v, expect %v.", testcase, name, out, expect)
 	}
 }
 
-func CheckDeepEqual(t *testing.T, testcase int, out, expect any) {
+func CheckDeepEqual(t *testing.T, testcase int, name string, out, expect any) {
 	if !reflect.DeepEqual(out, expect) {
-		t.Errorf("Testcase %d: out %v, expect %v.", testcase, out, expect)
+		t.Errorf("Testcase %d, %s: out %v, expect %v.", testcase, name, out, expect)
 	}
 }

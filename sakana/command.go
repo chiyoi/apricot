@@ -38,7 +38,6 @@ type example struct {
 
 type option struct {
 	names       []string
-	required    bool
 	description string
 }
 
@@ -60,10 +59,10 @@ func (c *Command) Welcome(msg string) {
 }
 
 // OptionUsage registers a option to display in Usage
-func (c *Command) OptionUsage(names []string, required bool, description string) {
+func (c *Command) OptionUsage(names []string, description string) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	c.options = append(c.options, option{names, required, description})
+	c.options = append(c.options, option{names, description})
 }
 
 // Example registers an example

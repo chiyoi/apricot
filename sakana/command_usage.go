@@ -27,7 +27,6 @@ func (c *Command) UsageString() string {
 	if len(c.options) != 0 {
 		fmt.Fprintln(&buf, "Options:")
 		var maxWidth int
-		var requiredExists bool
 		for _, option := range c.options {
 			var width int
 			for i, name := range option.names {
@@ -39,7 +38,6 @@ func (c *Command) UsageString() string {
 			if width > maxWidth {
 				maxWidth = width
 			}
-			requiredExists = requiredExists || option.required
 		}
 		for _, option := range c.options {
 			var width int
@@ -53,13 +51,6 @@ func (c *Command) UsageString() string {
 				}
 			}
 			fmt.Fprint(&buf, strings.Repeat(" ", maxWidth-width))
-			if requiredExists {
-				if option.required {
-					fmt.Fprint(&buf, " (required)")
-				} else {
-					fmt.Fprint(&buf, "           ")
-				}
-			}
 			fmt.Fprintf(&buf, " - %s\n", option.description)
 		}
 		fmt.Fprintln(&buf)

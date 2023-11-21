@@ -9,7 +9,6 @@ func (c *Command) String() string {
 	return fmt.Sprintf("(%s: %s)", c.name, c.summary.description)
 }
 
-// UsageString generates the usage string
 func (c *Command) UsageString() string {
 	c.mu.RLock()
 	defer c.mu.RUnlock()

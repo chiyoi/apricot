@@ -6,13 +6,24 @@ import (
 )
 
 func InternalError(w io.Writer) {
-	fmt.Fprintln(w, "Internal error.")
+	if _, err := fmt.Fprintln(w, "Internal error."); err != nil {
+		ls.Error(err)
+	}
 }
 
 func UsageError(w io.Writer, message string, usage string) {
-	fmt.Fprintln(w, "Usage error.")
-	fmt.Fprintln(w, message)
+	if _, err := fmt.Fprintln(w, "Usage error."); err != nil {
+		ls.Error(err)
+		return
+	}
+	if _, err := fmt.Fprintln(w, message); err != nil {
+		ls.Error(err)
+		return
+	}
 	if usage != "" {
-		fmt.Fprintln(w, usage)
+		if _, err := fmt.Fprintln(w, usage); err != nil {
+			ls.Error(err)
+			return
+		}
 	}
 }

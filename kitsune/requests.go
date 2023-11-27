@@ -85,7 +85,7 @@ func Delete(ctx context.Context, u string, auth func(r *http.Request) (*http.Req
 
 func runnerNewRequestWithContext(ctx context.Context, method string, u string) func(body io.Reader) (*http.Request, error) {
 	return func(body io.Reader) (*http.Request, error) {
-		return http.NewRequestWithContext(ctx, http.MethodGet, u, body)
+		return http.NewRequestWithContext(ctx, method, u, body)
 	}
 }
 

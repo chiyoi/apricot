@@ -1,4 +1,4 @@
 github.com/chiyoi/apricot/logs v0.1.0/go.mod h1:3WGyZnXDw1EFi1hBdUxVRlO3lNReHutK9iB8EIDMEOU=
 github.com/chiyoi/apricot/logs v0.5.0/go.mod h1:3WGyZnXDw1EFi1hBdUxVRlO3lNReHutK9iB8EIDMEOU=
-github.com/chiyoi/iter v0.5.18 h1:XbnkEs7sUjD8IWYxWsmD4NBFcgjYsu/yWDk0sqb2ecE=
-github.com/chiyoi/iter v0.5.18/go.mod h1:B83SfQynOpNv71lV0YAWD+46bsHxDwPyy7JZMMkDOTg=
+github.com/chiyoi/iter v0.5.19 h1:hPYvMWAwjn3Ytt83KpqLFH/ebgTfDVzg5A5TcHl+HXk=
+github.com/chiyoi/iter v0.5.19/go.mod h1:B83SfQynOpNv71lV0YAWD+46bsHxDwPyy7JZMMkDOTg=

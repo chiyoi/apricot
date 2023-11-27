@@ -15,7 +15,7 @@ func JSONReader(a any) (r io.Reader, err error) {
 	return &buf, json.NewEncoder(&buf).Encode(a)
 }
 
-func GetJSON(ctx context.Context, u string, auth func(r *http.Request) (*http.Request, error), a any) (err error) {
+func GetJSON(ctx context.Context, u string, auth AuthFunc, a any) (err error) {
 	r, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
 	if auth != nil {
 		r, err = res.Then(r, err, auth)
@@ -28,7 +28,7 @@ func GetJSON(ctx context.Context, u string, auth func(r *http.Request) (*http.Re
 	return ParseResponse(re, a)
 }
 
-func GetStream(ctx context.Context, u string, auth func(r *http.Request) (*http.Request, error)) (body io.ReadCloser, err error) {
+func GetStream(ctx context.Context, u string, auth AuthFunc) (body io.ReadCloser, err error) {
 	r, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
 	if auth != nil {
 		r, err = res.Then(r, err, auth)
@@ -40,7 +40,7 @@ func GetStream(ctx context.Context, u string, auth func(r *http.Request) (*http.
 	return re.Body, ParseResponse(re, nil)
 }
 
-func PostJSON(ctx context.Context, u string, auth func(r *http.Request) (*http.Request, error), resp, req any) (err error) {
+func PostJSON(ctx context.Context, u string, auth AuthFunc, resp, req any) (err error) {
 	body, err := JSONReader(req)
 	r, err := res.Then(body, err, runnerNewRequestWithContext(ctx, http.MethodPost, u))
 	if auth != nil {
@@ -56,7 +56,7 @@ func PostJSON(ctx context.Context, u string, auth func(r *http.Request) (*http.R
 	return ParseResponse(re, resp)
 }
 
-func PostStream(ctx context.Context, u string, auth func(r *http.Request) (*http.Request, error), body io.Reader, resp any) (err error) {
+func PostStream(ctx context.Context, u string, auth AuthFunc, body io.Reader, resp any) (err error) {
 	r, err := http.NewRequestWithContext(ctx, http.MethodPost, u, body)
 	if auth != nil {
 		r, err = res.Then(r, err, auth)
@@ -70,7 +70,7 @@ func PostStream(ctx context.Context, u string, auth func(r *http.Request) (*http
 	return ParseResponse(re, resp)
 }
 
-func Delete(ctx context.Context, u string, auth func(r *http.Request) (*http.Request, error)) (err error) {
+func Delete(ctx context.Context, u string, auth AuthFunc) (err error) {
 	r, err := http.NewRequestWithContext(ctx, http.MethodDelete, u, nil)
 	if auth != nil {
 		r, err = res.Then(r, err, auth)
@@ -92,6 +92,14 @@ func runnerNewRequestWithContext(ctx context.Context, method string, u string) f
 func runnerSetHeader(key, val string) func(r *http.Request) (*http.Request, error) {
 	return func(r *http.Request) (*http.Request, error) {
 		r.Header.Set(key, val)
+		return r, nil
+	}
+}
+
+type AuthFunc func(r *http.Request) (*http.Request, error)
+
+func NoAuth() AuthFunc {
+	return func(r *http.Request) (*http.Request, error) {
 		return r, nil
 	}
 }

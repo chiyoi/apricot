@@ -45,7 +45,7 @@ func GetStream(ctx context.Context, hook res.Hook[*http.Request]) func(u string)
 	}
 }
 
-func PostJSON(ctx context.Context, resp, hook res.Hook[*http.Request], req any) func(u string) (err error) {
+func PostJSON(ctx context.Context, resp any, hook res.Hook[*http.Request], req any) func(u string) (err error) {
 	return func(u string) (err error) {
 		body, err := JSONReader(req)
 		r, err := res.R(body, err, runnerNewRequestWithContext(ctx, http.MethodPost, u))

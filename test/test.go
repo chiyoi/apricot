@@ -1,6 +1,7 @@
 package test
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -36,6 +37,12 @@ func AddAttachment(t *testing.T, filename string, a any) {
 
 func CheckEqual[T comparable](t *testing.T, testcase int, name string, out, expect T) {
 	if out != expect {
+		t.Errorf("Testcase %d, %s: out %v, expect %v.", testcase, name, out, expect)
+	}
+}
+
+func CheckErrorIs(t *testing.T, testcase int, name string, out, expect error) {
+	if !errors.Is(out, expect) {
 		t.Errorf("Testcase %d, %s: out %v, expect %v.", testcase, name, out, expect)
 	}
 }

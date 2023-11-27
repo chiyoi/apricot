@@ -29,6 +29,7 @@ func GetJSON(ctx context.Context, u string, a any) (err error) {
 	if err != nil {
 		return
 	}
+	defer re.Body.Close()
 	return ParseResponse(re, a)
 }
 
@@ -43,6 +44,7 @@ func PostStream(ctx context.Context, u string, body io.Reader, resp any) (err er
 	if err != nil {
 		return
 	}
+	defer re.Body.Close()
 
 	return ParseResponse(re, resp)
 }
@@ -58,6 +60,7 @@ func PostJSON(ctx context.Context, u string, resp, req any) (err error) {
 	if err != nil {
 		return
 	}
+	defer re.Body.Close()
 
 	return ParseResponse(re, resp)
 }
@@ -68,5 +71,6 @@ func Delete(ctx context.Context, u string) (response *http.Response, err error) 
 	if err != nil {
 		return
 	}
+	defer re.Body.Close()
 	return re, ParseResponse(re, nil)
 }

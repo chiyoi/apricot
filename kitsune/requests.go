@@ -17,7 +17,9 @@ func JSONReader(a any) (r io.Reader, err error) {
 
 func GetJSON(ctx context.Context, u string, auth func(r *http.Request) (*http.Request, error), a any) (err error) {
 	r, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
-	r, err = res.Then(r, err, auth)
+	if auth != nil {
+		r, err = res.Then(r, err, auth)
+	}
 	re, err := res.Then(r, err, http.DefaultClient.Do)
 	if err != nil {
 		return
@@ -28,7 +30,9 @@ func GetJSON(ctx context.Context, u string, auth func(r *http.Request) (*http.Re
 
 func GetStream(ctx context.Context, u string, auth func(r *http.Request) (*http.Request, error)) (body io.ReadCloser, err error) {
 	r, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
-	r, err = res.Then(r, err, auth)
+	if auth != nil {
+		r, err = res.Then(r, err, auth)
+	}
 	re, err := res.Then(r, err, http.DefaultClient.Do)
 	if err != nil {
 		return
@@ -39,7 +43,9 @@ func GetStream(ctx context.Context, u string, auth func(r *http.Request) (*http.
 func PostJSON(ctx context.Context, u string, auth func(r *http.Request) (*http.Request, error), resp, req any) (err error) {
 	body, err := JSONReader(req)
 	r, err := res.Then(body, err, runnerNewRequestWithContext(ctx, http.MethodPost, u))
-	r, err = res.Then(r, err, auth)
+	if auth != nil {
+		r, err = res.Then(r, err, auth)
+	}
 	r, err = res.Then(r, err, runnerSetHeader("Content-Type", "application/json"))
 	re, err := res.Then(r, err, http.DefaultClient.Do)
 	if err != nil {
@@ -52,7 +58,9 @@ func PostJSON(ctx context.Context, u string, auth func(r *http.Request) (*http.R
 
 func PostStream(ctx context.Context, u string, auth func(r *http.Request) (*http.Request, error), body io.Reader, resp any) (err error) {
 	r, err := http.NewRequestWithContext(ctx, http.MethodPost, u, body)
-	r, err = res.Then(r, err, auth)
+	if auth != nil {
+		r, err = res.Then(r, err, auth)
+	}
 	r, err = res.Then(r, err, runnerSetHeader("Content-Type", "application/octet-stream"))
 	re, err := res.Then(r, err, http.DefaultClient.Do)
 	if err != nil {
@@ -64,7 +72,9 @@ func PostStream(ctx context.Context, u string, auth func(r *http.Request) (*http
 
 func Delete(ctx context.Context, u string, auth func(r *http.Request) (*http.Request, error)) (err error) {
 	r, err := http.NewRequestWithContext(ctx, http.MethodDelete, u, nil)
-	r, err = res.Then(r, err, auth)
+	if auth != nil {
+		r, err = res.Then(r, err, auth)
+	}
 	re, err := res.Then(r, err, http.DefaultClient.Do)
 	if err != nil {
 		return

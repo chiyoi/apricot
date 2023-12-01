@@ -15,6 +15,20 @@ func JSONReader(a any) (r io.Reader, err error) {
 	return &buf, json.NewEncoder(&buf).Encode(a)
 }
 
+func Get(ctx context.Context, hook res.Hook[*http.Request]) func(u string) (body io.ReadCloser, err error) {
+	return func(u string) (body io.ReadCloser, err error) {
+		r, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
+		if hook != nil {
+			r, err = res.R(r, err, hook)
+		}
+		re, err := res.R(r, err, http.DefaultClient.Do)
+		if err != nil {
+			return
+		}
+		return re.Body, ParseResponse(re, nil)
+	}
+}
+
 func GetJSON(ctx context.Context, resp any, hook res.Hook[*http.Request]) func(u string) error {
 	return func(endpoint string) (err error) {
 		r, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
@@ -31,17 +45,19 @@ func GetJSON(ctx context.Context, resp any, hook res.Hook[*http.Request]) func(u
 	}
 }
 
-func GetStream(ctx context.Context, hook res.Hook[*http.Request]) func(u string) (body io.ReadCloser, err error) {
-	return func(u string) (body io.ReadCloser, err error) {
-		r, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
+func Post(ctx context.Context, body io.Reader, resp any, hook res.Hook[*http.Request]) func(u string) (err error) {
+	return func(u string) (err error) {
+		r, err := http.NewRequestWithContext(ctx, http.MethodPost, u, body)
 		if hook != nil {
 			r, err = res.R(r, err, hook)
 		}
+		r, err = res.R(r, err, runnerSetHeaderLine("Content-Type", "application/octet-stream"))
 		re, err := res.R(r, err, http.DefaultClient.Do)
 		if err != nil {
 			return
 		}
-		return re.Body, ParseResponse(re, nil)
+		defer re.Body.Close()
+		return ParseResponse(re, resp)
 	}
 }
 
@@ -64,9 +80,9 @@ func PostJSON(ctx context.Context, resp any, hook res.Hook[*http.Request]) func(
 	}
 }
 
-func PostStream(ctx context.Context, body io.Reader, resp any, hook res.Hook[*http.Request]) func(u string) (err error) {
+func Put(ctx context.Context, body io.Reader, resp any, hook res.Hook[*http.Request]) func(u string) (err error) {
 	return func(u string) (err error) {
-		r, err := http.NewRequestWithContext(ctx, http.MethodPost, u, body)
+		r, err := http.NewRequestWithContext(ctx, http.MethodPut, u, body)
 		if hook != nil {
 			r, err = res.R(r, err, hook)
 		}

@@ -11,7 +11,7 @@ import (
 
 var ls = func() *logs.Loggers {
 	ls := logs.NewLoggers()
-	ls.Prefix("[kitsune] ")
+	ls.Prefix("[kitsune]")
 	return ls
 }()
 

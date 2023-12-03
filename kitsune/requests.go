@@ -88,13 +88,3 @@ func Delete(ctx context.Context, hook res.Hook[*http.Request]) func(u string) (e
 		return ParseResponse(re, nil)
 	}
 }
-
-func HookSetHeaderContentTypeJSON(r *http.Request) (*http.Request, error) {
-	r.Header.Set("Content-Type", "application/json")
-	return r, nil
-}
-
-func HookSetHeaderContentTypeStream(r *http.Request) (*http.Request, error) {
-	r.Header.Set("Content-Type", "application/octet-stream")
-	return r, nil
-}

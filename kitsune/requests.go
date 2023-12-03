@@ -50,7 +50,6 @@ func Post(ctx context.Context, body io.Reader, resp any, hook res.Hook[*http.Req
 		if hook != nil {
 			r, err = res.R(r, err, hook)
 		}
-		r, err = res.R(r, err, runnerSetHeaderLine("Content-Type", "application/octet-stream"))
 		re, err := res.R(r, err, http.DefaultClient.Do)
 		if err != nil {
 			return
@@ -66,7 +65,6 @@ func Put(ctx context.Context, body io.Reader, resp any, hook res.Hook[*http.Requ
 		if hook != nil {
 			r, err = res.R(r, err, hook)
 		}
-		r, err = res.R(r, err, runnerSetHeaderLine("Content-Type", "application/octet-stream"))
 		re, err := res.R(r, err, http.DefaultClient.Do)
 		if err != nil {
 			return
@@ -91,9 +89,12 @@ func Delete(ctx context.Context, hook res.Hook[*http.Request]) func(u string) (e
 	}
 }
 
-func runnerSetHeaderLine(key, value string) func(r *http.Request) (*http.Request, error) {
-	return func(r *http.Request) (*http.Request, error) {
-		r.Header.Set(key, value)
-		return r, nil
-	}
+func HookSetHeaderContentTypeJSON(r *http.Request) (*http.Request, error) {
+	r.Header.Set("Content-Type", "application/json")
+	return r, nil
+}
+
+func HookSetHeaderContentTypeStream(r *http.Request) (*http.Request, error) {
+	r.Header.Set("Content-Type", "application/octet-stream")
+	return r, nil
 }

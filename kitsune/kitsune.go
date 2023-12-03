@@ -39,7 +39,7 @@ func ParseResponse(re *http.Response, a any) (err error) {
 		return
 	}
 	defer re.Body.Close()
-	return json.NewDecoder(re.Body).Decode(&a)
+	return json.NewDecoder(re.Body).Decode(a)
 }
 
 type ResponseError struct {

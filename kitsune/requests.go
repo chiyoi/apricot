@@ -26,12 +26,11 @@ func Get(ctx context.Context, resp any, hook res.Hook[*http.Request]) func(u str
 			return
 		}
 		defer re.Body.Close()
-		err = ParseResponse(re, resp)
-		return
+		return ParseResponse(re, resp)
 	}
 }
 
-func GetStream(ctx context.Context, hook res.Hook[*http.Request]) func(u string) (body io.ReadCloser, err error) {
+func GetStream(ctx context.Context, hook res.Hook[*http.Request]) func(u string) (stream io.ReadCloser, err error) {
 	return func(u string) (body io.ReadCloser, err error) {
 		r, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
 		if hook != nil {
